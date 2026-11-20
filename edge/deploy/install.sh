@@ -7,7 +7,9 @@ VER=$(cat VERSION 2>/dev/null || echo 0.1.0)
 id senseband >/dev/null 2>&1 || useradd --system --home /var/lib/senseband --create-home --shell /usr/sbin/nologin senseband
 for g in i2c gpio dialout bluetooth; do getent group $g >/dev/null && usermod -aG $g senseband || true; done
 mkdir -p "$ROOT/releases/$VER" /var/lib/senseband /etc/senseband
-cp -r edge ml app/dist VERSION "$ROOT/releases/$VER"/ 2>/dev/null || cp -r edge ml VERSION "$ROOT/releases/$VER"/
+cp -r edge ml VERSION "$ROOT/releases/$VER"/
+mkdir -p "$ROOT/releases/$VER/app"
+[ -d app/dist ] && cp -r app/dist "$ROOT/releases/$VER/app/" || echo "warning: app/dist missing - the band will run without the phone UI (build it: cd app && npm i && npm run build)"
 ln -sfn "$ROOT/releases/$VER" "$ROOT/current"
 [ -d "$ROOT/venv" ] || python3 -m venv "$ROOT/venv"
 "$ROOT/venv/bin/pip" install --quiet numpy scipy pyyaml pydantic fastapi uvicorn reportlab cryptography onnxruntime \

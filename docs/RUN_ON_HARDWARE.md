@@ -26,7 +26,7 @@ make sim SCENARIO=fall             # open http://localhost:8080
 3. Bring-up checks (docs/03): `i2cdetect -y 1` shows 48 and 68; `ls /sys/bus/w1/devices` shows `28-...`; `AT` to the SIM800L answers OK;
    `bluetoothctl scan on` shows `SenseBand-S`.
 4. Install: `git clone` the repo on the Pi, edit `edge/deploy/config.example.yaml` (**put your real emergency phone numbers**), then
-   `sudo sh edge/deploy/install.sh`. Build the app first on a laptop (`cd app && npm i && npm run build`) and copy `app/dist` into the clone.
+   `sudo sh edge/deploy/install.sh`. The built app (`app/dist`) is already in the repo, so no Node is needed on the Pi.
    Models: `ml/models/` is already in the repo.
 5. Check: `systemctl status senseband`, `journalctl -u senseband -f`, then `curl localhost:8080/api/status` (sensors, band link, SMS modem).
    `curl localhost:8080/api/models` shows which ONNX models are active. Quick manual run: `make edge`.
