@@ -1,5 +1,4 @@
 *.db
-*.log
 *.pyc
 .DS_Store
 .env
@@ -9,10 +8,13 @@
 .venv/
 __pycache__/
 app/dev-dist/
-app/dist/
 app/node_modules/
 cloud/node_modules/
 data/recordings/
 logs/
-ml/data/
 node_modules/
+# raw third-party datasets (GBs, some files > GitHub's 100 MB limit): re-download with `make train`
+ml/data/*
+!ml/data/cache/
+!ml/data/train.log
+*.log
