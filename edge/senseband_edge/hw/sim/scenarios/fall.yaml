@@ -1,0 +1,9 @@
+name: fall
+description: Walking, then a fall at t=40.5 s followed by lying still (no recovery). Expect one SMS after 30 s.
+seed: 4
+segments:
+  - {duration_s: 10, activity: standing, hr: 80}
+  - {duration_s: 30, activity: walking, hr: 100, ramp_s: 8}
+  # fall starts 20 s into this segment (t=40 s); person then lies still and HR rises (stress)
+  - {duration_s: 80, activity: walking, hr: 100,
+     events: [{type: fall, at_s: 0.5, then: lying_still, hr_after: 118, ramp_after_s: 10}]}

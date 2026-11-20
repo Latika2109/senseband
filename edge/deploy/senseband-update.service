@@ -1,0 +1,11 @@
+[Unit]
+Description=SenseBand signed OTA update check
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=senseband
+Environment=PYTHONPATH=/opt/senseband/current/edge:/opt/senseband/current/ml
+Environment=SENSEBAND_CONFIG=/etc/senseband/config.yaml
+ExecStart=/opt/senseband/venv/bin/python -m senseband_edge.ota --apply

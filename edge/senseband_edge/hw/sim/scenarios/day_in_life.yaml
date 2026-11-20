@@ -1,0 +1,15 @@
+name: day_in_life
+description: A full 24 hours - sleep, daily activity, a 40 min jog, sleep again (Milestone 6 acceptance; ~20 min to simulate at max speed).
+seed: 21
+segments:
+  - {duration_s: 25200, activity: sleeping, hr: 56, spo2: 96, spo2_dips: [{at_s: 3600, depth: 6, dur_s: 30}, {at_s: 9000, depth: 6, dur_s: 30}, {at_s: 14000, depth: 6, dur_s: 30}, {at_s: 20000, depth: 6, dur_s: 30}]}
+  - {duration_s: 3600,  activity: sitting,  hr: 72}
+  - {duration_s: 1800,  activity: walking,  hr: 100, ramp_s: 60}
+  - {duration_s: 10800, activity: sitting,  hr: 74, ramp_s: 120}
+  - {duration_s: 2400,  activity: jogging,  hr: 152, ramp_s: 120}
+  - {duration_s: 1200,  activity: walking,  hr: 112, ramp_s: 120}
+  - {duration_s: 14400, activity: sitting,  hr: 75, ramp_s: 120}
+  - {duration_s: 1800,  activity: walking,  hr: 98,  ramp_s: 60}
+  - {duration_s: 1800,  activity: standing, hr: 80}
+  - {duration_s: 10800, activity: sitting,  hr: 72}
+  - {duration_s: 12600, activity: sleeping, hr: 55, spo2: 96, trans_s: 4, spo2_dips: [{at_s: 3000, depth: 5, dur_s: 30}, {at_s: 8000, depth: 6, dur_s: 30}]}

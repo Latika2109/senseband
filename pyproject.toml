@@ -1,0 +1,27 @@
+[project]
+name = "senseband"
+version = "0.1.0"
+description = "SenseBand: two-band wearable for remote health monitoring and recovery tracking"
+requires-python = ">=3.11"
+dependencies = ["numpy", "scipy", "pyyaml", "pydantic>=2", "fastapi", "uvicorn", "reportlab", "cryptography", "onnxruntime"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "pre-commit", "httpx"]
+pi = ["smbus2", "gpiozero", "pyserial", "bleak"]
+train = ["lightgbm", "scikit-learn", "onnxmltools", "skl2onnx", "wfdb"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["edge/prototype", ".venv", "ml/data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]            # line length is a style choice here, not a bug class
+
+
+[tool.pytest.ini_options]
+pythonpath = ["edge", "ml"]
+testpaths = ["edge/tests", "ml/tests"]
+addopts = "-q"
+markers = ["slow: long-running tests (deselect with -m 'not slow')"]

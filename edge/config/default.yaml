@@ -1,0 +1,217 @@
+# SenseBand edge configuration. Override with SENSEBAND_CONFIG=/path/to/file.yaml (deep-merged).
+# Every threshold, pin, path and phone number lives here - never in code.
+mode: auto                       # auto = hardware unless SENSEBAND_SIM=1 | hw | sim
+db_path: senseband.db
+port: 8080
+device_name: SenseBand            # shown in the app when pairing
+cors_origins: ["*"]               # the app may be served from another origin (dev, phone). LAN only.
+
+patient:
+  id: auto                       # 'auto' = a unique id generated on first start and kept in the DB (it is the cloud key)
+  name: Test Patient
+  age: 40
+  beta_blocker: false            # lowers the expected HR range
+  resting_hr: null               # learned automatically when null
+
+sms:
+  contacts: ["+910000000000"]    # family / doctor numbers WITH country code - replace!
+  retries: 3
+  retry_delay_s: 5
+  sim800: {port: /dev/serial0, baud: 9600}
+
+alerts:
+  countdown_s: 30                # critical alert: buzzer + "I'm OK" window before SMS
+  sos_countdown_s: 0             # long-press SOS sends immediately
+  cooldown_s: {info: 300, warning: 600, critical: 600}   # same kind not repeated within this
+  ecg_strip_s: 30                # ECG saved with every event
+  buzzer_pattern_s: [0.5, 0.5]   # on, off
+
+thresholds:
+  hr_low: 40
+  hr_low_sleep: 35
+  hr_low_sustain_s: 15
+  hr_high_rest: 120
+  hr_critical_rest: 170
+  hr_rest_sustain_s: 120
+  hr_critical_sustain_s: 30
+  hr_high_active: 190
+  hr_active_sustain_s: 30
+  recovery_allowance_s: 180      # after exertion, high HR at rest is expected for a while
+  spo2_warn: 92
+  spo2_warn_sustain_s: 60
+  spo2_crit: 88
+  spo2_crit_sustain_s: 10
+  desat_drop_pct: 4              # dip >= 4 % below baseline counts as a desaturation event
+  desat_events_warn: 3           # ...3 in desat_window_s while lying -> warning
+  desat_window_s: 600
+  temp_high: 38.0
+  temp_hr_margin: 15             # fever rule: temp high AND resting HR this far above baseline
+  temp_sustain_s: 1800
+  rr_irregularity: 0.12          # RR coefficient of variation that counts as irregular
+  rr_irregular_sustain_s: 30
+  no_pulse_s: 10                 # contact OK but no heartbeat for this long, and not moving
+  check_sensor_s: 10             # poor signal this long -> "check sensor" notice
+
+quality:
+  ecg_flat_mv: 0.15              # filtered ECG peak-to-peak below this = no signal
+  ecg_noise_hf_mv: 0.10          # high-frequency (>30 Hz) RMS above this = noisy
+  ecg_min_qrs_mv: 0.30           # smallest peak prominence accepted as a heartbeat
+  ecg_qrs_frac: 0.40             # ...or this fraction of the learned QRS amplitude
+  ppg_hr_range: [30, 220]
+  ppg_spo2_range: [70, 100]
+  motion_ppg_invalid_g: 0.6
+
+activity:                        # rule-based fallback for model M1
+  window_s: 2.56
+  hop_s: 1.28
+  rest_std_g: 0.08               # std of |acc| below this = not moving
+  run_std_g: 0.45
+  lying_axis_g: 0.7              # gravity mostly along body x or y = lying
+  sitting_tilt_deg: 8
+  sleep_after_lying_s: 120
+  cadence_run_hz: 2.3
+
+expected_hr:                     # [low, high] per context for a healthy adult (model M5 fallback)
+  lying: [48, 85]
+  sleeping: [42, 75]
+  sitting: [52, 95]
+  standing: [58, 105]
+  walking: [75, 130]
+  stairs: [90, 150]
+  exercising: [90, 180]
+  running: [110, 190]
+  beta_blocker_scale: 0.85
+
+ews:                             # NEWS2 subset: score by [upper_bound, points]
+  hr: [[40, 3], [50, 1], [90, 0], [110, 1], [130, 2], [999, 3]]
+  spo2: [[91, 3], [93, 2], [95, 1], [101, 0]]
+  temp: [[35.0, 3], [36.0, 1], [38.0, 0], [39.0, 1], [99, 2]]
+  watch_at: 3
+  alert_at: 5
+
+fall:
+  freefall_g: 0.4
+  impact_g: 2.5
+  hard_impact_g: 3.5
+  still_s: 10
+  still_after_s: 2.0
+  moving_dev_g: 0.15
+
+storage:
+  vitals_minute_s: 60
+  ecg_ring_s: 40
+  keep_raw: false                # keep a rolling raw ECG/IMU store on the band (SD wear + disk use)
+  raw_days: 7
+  recordings_dir: data/recordings   # 'Record training data' mode writes labelled .npz files here
+  max_recording_s: 1800
+
+hardware:                        # BCM numbers; physical pins in docs/03_HARDWARE.md
+  i2c_bus: 1
+  mpu_addr: 0x68
+  ads_addr: 0x48
+  ecg_channel: 0
+  grip_channel: 1
+  ecg_hz: 250
+  ecg_gain: 1100                 # AD8232
+  ecg_midpoint_v: 1.5
+  pin_lo_plus: 17
+  pin_lo_minus: 27
+  pin_ecg_sdn: 22
+  pin_button: 23                 # "I'm OK" short press, SOS long press
+  pin_buzzer: 24
+  pin_led: 25
+  sos_hold_s: 2.0
+  temp_sensor: ds18b20           # ds18b20 | mlx90614 | none
+  mlx_addr: 0x5A
+  temp_offset_c: 0.0
+  grip_cal: [[0.0, 0.0], [0.3, 1.0], [1.0, 5.0], [1.8, 15.0], [2.5, 30.0], [3.0, 45.0]]   # (volts, kg): REPLACE after calibrating with known weights
+  small_band_name: SenseBand-S
+  ble_data_uuid: 5e75e000-0000-4000-8000-00000000b002
+  ble_cmd_uuid: 5e75e000-0000-4000-8000-00000000b003
+
+rehab:                           # Milestone 3
+  calibration_s: 3.0             # hold the limb still in the neutral pose
+  calibration_steady_deg: 3.0    # max wobble during calibration
+  calibration_max_age_h: 24      # recalibrate daily (straps move)
+  rep_up_frac: 0.5               # a rep starts being counted past this fraction of the target
+  rep_down_frac: 0.2             # ...and is complete once back below this fraction
+  default_target_deg: 60         # used when no target is known (first assessment)
+  in_target_frac: 0.9            # "in the target zone" = at least this fraction of the target
+  too_fast_factor: 0.7           # rep shorter than 70 % of the planned tempo = too fast
+  max_speed_dps: 120             # angular speed above this is too fast regardless
+  pain_stop: 7                   # pain >= 7/10 stops the session
+  angle_msg_every: 2             # one `angle` WebSocket message per N band samples (25 Hz at 50 Hz)
+  band_rate_exercise_hz: 50
+  band_rate_idle_hz: 10
+  haptic_ms: 120                 # vibration pulse for tempo cue / limit exceeded
+  grip_test_s: 5
+  grip_reference_kg: 30          # rough adult average if the other hand is unknown
+  stage_bounds_pct: [40, 75]     # % of normal ROM: <40 stage 1, <75 stage 2, else stage 3
+  forecast_min_sessions: 5
+  forecast_bootstrap: 200
+  forecast_target_pct: 90        # forecast the date ROM reaches this % of normal (or the doctor's target)
+  sessions_per_day: 1            # planned sessions per day (adherence = days with a session / days)
+  pain_gentle_at: 5              # pain at or above this keeps the plan at the gentle stage
+  low_adherence: 0.5             # below this share of planned sessions, volume is not increased
+  normal_rom:                    # degrees (AAOS, docs/04_ML_MODELS.md)
+    shoulder_flexion: 180
+    shoulder_abduction: 180
+    shoulder_rotation: 90
+    elbow_flexion: 150
+    forearm_rotation: 80
+    wrist_flexion: 80
+    wrist_extension: 70
+    wrist_deviation: 45
+    hip_flexion: 120
+    hip_abduction: 45
+    knee_flexion: 135
+    ankle_dorsiflexion: 20
+    ankle_plantarflexion: 50
+
+cloud:                           # Milestone 4 (optional: the band works fully without it)
+  enabled: false
+  url: ""                        # https://<project>.supabase.co/functions/v1
+  device_key: ""                 # from select register_device('<patient id>')  - keep secret
+  batch_rows: 100
+  batch_bytes: 262144            # rural links: small requests that can resume
+  timeout_s: 15
+  backoff_s: [5, 15, 60, 300, 900]   # after a failure; the last value repeats
+  pull_every_s: 120
+  dead_after_attempts: 5         # a row the cloud keeps rejecting is parked, not retried forever
+  priority: [events, ecg_strips, patients, programs, recovery_cases, exercise_plans, assessments, exercise_sessions, calibrations, forecasts, notes, vitals_minute]
+
+models:                          # Milestone 5: ONNX models replace the rule-based fallbacks when present and healthy
+  enabled: true                  # master switch; any missing/mismatched/slow model falls back to rules automatically
+  dir: ml/models                 # relative paths are relative to the repository root
+  max_infer_ms: 50               # a model slower than this on average is switched off (Pi 3 budget)
+  learning_period_h: 48          # personal baselines are being learned; only absolute-safety alerts use them
+  activity: {enabled: true, min_prob: 0.55}
+  fall: {enabled: false, veto_below: 0.3}      # trained on SIMULATED falls only: keep off until validated on real data
+  ecg_quality: {enabled: true, min_prob: 0.75}
+  rhythm: {enabled: true, af_prob: 0.6, min_beats: 20}
+  expected_hr: {enabled: true, min_band_bpm: 15, learning_band_scale: 1.5}
+
+logging:
+  dir: logs                      # relative to the working directory; rotated, never grows without bound
+  level: INFO
+  max_mb: 2
+  backups: 5
+
+power:                           # battery: ECG duty-cycling during sleep. OFF by default: it slows collapse detection
+  ecg_duty_cycle: false          # (from ~10 s to ~25 s while paused). Enable only with a doctor's/caregiver's agreement.
+  sleep_min_s: 600               # asleep this long before the ECG may pause
+  ppg_stable_s: 300              # ...and the finger SpO2 sensor has given a steady valid pulse this long
+  ppg_stable_band_bpm: 8
+  wake_every_s: 300              # while paused, ECG comes back on this often...
+  wake_for_s: 30                 # ...for this long
+  resume_if_ppg_bad_s: 10        # any PPG trouble resumes ECG at once
+
+ota:                             # signed over-the-air updates (python -m senseband_edge.ota)
+  enabled: false
+  manifest_url: ""
+  public_key: ""                 # base64 Ed25519 public key that signs releases
+  root: /opt/senseband           # releases/<version>, current -> releases/<version>, previous
+  keep: 3
+  health_timeout_s: 90
+  max_bytes: 200000000
+  restart_cmd: [systemctl, restart, senseband]

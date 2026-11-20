@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 246 248 248; --surface: 255 255 255; --line: 218 226 226; --ink: 17 31 31; --muted: 90 107 107;
+  --brand: 15 118 110; --ok: 21 128 61; --warn: 180 83 9; --crit: 185 28 28;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: 11 18 18; --surface: 20 31 31; --line: 42 58 58; --ink: 232 241 241; --muted: 143 163 163;
+    --brand: 45 212 191; --ok: 74 222 128; --warn: 251 191 36; --crit: 248 113 113;
+  }
+}
+html, body, #root { min-height: 100%; }
+body { @apply bg-bg text-ink antialiased; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Devanagari', sans-serif; }
+button, input, select, textarea { font: inherit; }
+:focus-visible { outline: 3px solid rgb(var(--brand)); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

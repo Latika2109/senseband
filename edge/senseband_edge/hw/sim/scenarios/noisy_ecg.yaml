@@ -1,0 +1,7 @@
+name: noisy_ecg
+description: Resting with heavy muscle/motion noise on the ECG between 60 s and 150 s.
+seed: 9
+segments:
+  - {duration_s: 60, activity: sitting, hr: 72}
+  - {duration_s: 90, activity: sitting, hr: 72, ecg_noise: 0.9, ramp_s: 2}
+  - {duration_s: 90, activity: sitting, hr: 72, ramp_s: 2}

@@ -1,0 +1,29 @@
+# /etc/senseband/config.yaml - overrides edge/config/default.yaml (only put what you change here)
+mode: hw
+db_path: /var/lib/senseband/senseband.db
+
+sms:
+  contacts: ["+91XXXXXXXXXX"]        # emergency numbers WITH country code. The app's profile contacts take over once set.
+
+logging:
+  dir: /var/lib/senseband/logs
+
+storage:
+  recordings_dir: /var/lib/senseband/recordings
+  keep_raw: false                     # true = rolling 7-day raw ECG/IMU on the band (more SD wear)
+
+models:
+  dir: /opt/senseband/current/ml/models
+
+# cloud:
+#   enabled: true
+#   url: https://<project>.supabase.co/functions/v1
+#   device_key: "<from register_device()>"
+
+# ota:
+#   enabled: true
+#   manifest_url: https://example.org/senseband/manifest.json
+#   public_key: "<base64 Ed25519 public key>"
+
+# power:
+#   ecg_duty_cycle: true               # see docs: slows collapse detection while the ECG is paused

@@ -1,0 +1,44 @@
+# SenseBand edge service (Raspberry Pi 3). Installed by install.sh to /etc/systemd/system/.
+[Unit]
+Description=SenseBand edge service
+After=network.target bluetooth.target
+Wants=bluetooth.target
+StartLimitIntervalSec=300
+StartLimitBurst=10
+
+[Service]
+Type=simple
+User=senseband
+Group=senseband
+SupplementaryGroups=i2c gpio dialout bluetooth
+WorkingDirectory=/var/lib/senseband
+Environment=PYTHONPATH=/opt/senseband/current/edge:/opt/senseband/current/ml
+Environment=SENSEBAND_CONFIG=/etc/senseband/config.yaml
+Environment=SENSEBAND_HEALTH_FILE=/opt/senseband/healthy
+EnvironmentFile=-/opt/senseband/current/env
+ExecStartPre=+/opt/senseband/current/edge/deploy/power.sh
+ExecStart=/opt/senseband/venv/bin/python -m senseband_edge --hw
+Restart=always
+RestartSec=3
+# keep the Pi 3 (1 GB) healthy: the whole edge must stay under 400 MB
+MemoryMax=400M
+CPUWeight=200
+Nice=-5
+# least privilege
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/senseband /opt/senseband
+DeviceAllow=/dev/i2c-1 rw
+DeviceAllow=/dev/gpiomem rw
+DeviceAllow=/dev/serial0 rw
+DeviceAllow=/dev/ttyAMA0 rw
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+# logs: journald AND the rotating file in /var/lib/senseband/logs
+
+[Install]
+WantedBy=multi-user.target

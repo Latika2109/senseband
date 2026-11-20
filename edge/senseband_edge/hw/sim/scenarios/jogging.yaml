@@ -1,0 +1,9 @@
+name: jogging
+description: Sit, walk, jog 7 min (HR 155 is NORMAL here), walk, cool down. 10 min total.
+seed: 2
+segments:
+  - {duration_s: 60,  activity: sitting, hr: 78}
+  - {duration_s: 30,  activity: walking, hr: 105, ramp_s: 15}
+  - {duration_s: 420, activity: jogging, hr: 155, ramp_s: 40}
+  - {duration_s: 60,  activity: walking, hr: 118, ramp_s: 30}
+  - {duration_s: 30,  activity: sitting, hr: 95,  ramp_s: 30}

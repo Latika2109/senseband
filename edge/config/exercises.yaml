@@ -1,0 +1,42 @@
+# Exercise library (docs/04: model M9 is rules over this table, not ML). DEFAULTS that a doctor or
+# physio must approve or edit. tempo_s = [seconds up, seconds down]. target_pct = % of normal ROM.
+# Stage 1 early mobility (<40 % of normal), stage 2 active range (<75 %), stage 3 strengthening.
+exercises:
+  - {id: elbow_assisted_flexion, joint: elbow, movement: elbow_flexion, stage: 1, sets: 3, reps: 10, hold_s: 10, tempo_s: [4, 4], target_pct: 40,
+     name: Gentle assisted elbow bend, name_hi: कोहनी को सहारे से हल्का मोड़ना, how: Support the forearm with the other hand and bend only as far as it is comfortable.}
+  - {id: elbow_active_flexion, joint: elbow, movement: elbow_flexion, stage: 2, sets: 3, reps: 15, hold_s: 3, tempo_s: [3, 3], target_pct: 75,
+     name: Active elbow bend and straighten, name_hi: कोहनी मोड़ना और सीधा करना, how: Bend and straighten slowly through the full available range.}
+  - {id: elbow_strength_flexion, joint: elbow, movement: elbow_flexion, stage: 3, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 95,
+     name: Elbow bend with light weight, name_hi: हल्के वज़न के साथ कोहनी मोड़ना, how: Hold a 0.5 to 1 kg weight or resistance band; keep the elbow close to your side.}
+  - {id: forearm_rotation_active, joint: elbow, movement: forearm_rotation, stage: 2, sets: 3, reps: 10, hold_s: 3, tempo_s: [3, 3], target_pct: 70,
+     name: Forearm turn palm up and down, name_hi: हथेली ऊपर-नीचे घुमाना, how: Elbow at 90 degrees by your side, turn the palm up then down.}
+  - {id: wrist_assisted_flexion, joint: wrist, movement: wrist_flexion, stage: 1, sets: 3, reps: 10, hold_s: 10, tempo_s: [4, 4], target_pct: 40,
+     name: Gentle assisted wrist bend, name_hi: कलाई को सहारे से हल्का मोड़ना, how: Rest the forearm on a table and let the other hand guide the wrist.}
+  - {id: wrist_active_flexion, joint: wrist, movement: wrist_flexion, stage: 2, sets: 3, reps: 15, hold_s: 3, tempo_s: [3, 3], target_pct: 75,
+     name: Active wrist bend, name_hi: कलाई मोड़ना, how: Move the wrist up and down slowly with the forearm supported.}
+  - {id: wrist_strength_flexion, joint: wrist, movement: wrist_flexion, stage: 3, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 95,
+     name: Wrist curls with light weight, name_hi: हल्के वज़न के साथ कलाई का कर्ल, how: Use a 0.5 kg weight or band.}
+  - {id: shoulder_pendulum, joint: shoulder, movement: shoulder_flexion, stage: 1, sets: 3, reps: 10, hold_s: 5, tempo_s: [4, 4], target_pct: 30,
+     name: Shoulder pendulum swing, name_hi: कंधे का पेंडुलम झूला, how: Lean forward, let the arm hang, and swing it gently forward and back.}
+  - {id: shoulder_active_flexion, joint: shoulder, movement: shoulder_flexion, stage: 2, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 70,
+     name: Raise the arm forward, name_hi: हाथ को आगे उठाना, how: Lift the arm forward as high as is comfortable and lower slowly.}
+  - {id: shoulder_strength_abduction, joint: shoulder, movement: shoulder_abduction, stage: 3, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 90,
+     name: Raise the arm sideways with a band, name_hi: बैंड के साथ हाथ को बगल में उठाना, how: Light resistance band, lift to shoulder height.}
+  - {id: hip_assisted_flexion, joint: hip, movement: hip_flexion, stage: 1, sets: 3, reps: 10, hold_s: 5, tempo_s: [4, 4], target_pct: 40,
+     name: Lying heel slide, name_hi: लेटकर एड़ी खिसकाना, how: Lying on your back, slide the heel toward the buttock and back.}
+  - {id: hip_active_flexion, joint: hip, movement: hip_flexion, stage: 2, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 75,
+     name: Standing knee lift, name_hi: खड़े होकर घुटना उठाना, how: Hold a support and lift the knee towards the chest.}
+  - {id: hip_strength_abduction, joint: hip, movement: hip_abduction, stage: 3, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 90,
+     name: Side leg raise, name_hi: बगल में पैर उठाना, how: Lift the straight leg sideways, keep the toes forward.}
+  - {id: knee_assisted_flexion, joint: knee, movement: knee_flexion, stage: 1, sets: 3, reps: 10, hold_s: 10, tempo_s: [4, 4], target_pct: 40,
+     name: Seated assisted knee bend, name_hi: बैठकर घुटने को सहारे से मोड़ना, how: Sit on a chair and slide the foot back, helping with the other leg.}
+  - {id: knee_active_flexion, joint: knee, movement: knee_flexion, stage: 2, sets: 3, reps: 15, hold_s: 3, tempo_s: [3, 3], target_pct: 75,
+     name: Active knee bend and straighten, name_hi: घुटना मोड़ना और सीधा करना, how: Sitting, bend and straighten the knee slowly through the full range.}
+  - {id: knee_strength_flexion, joint: knee, movement: knee_flexion, stage: 3, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 95,
+     name: Knee bend with resistance band, name_hi: बैंड के साथ घुटना मोड़ना, how: Resistance band around the ankle; control the movement both ways.}
+  - {id: ankle_assisted_dorsi, joint: ankle, movement: ankle_dorsiflexion, stage: 1, sets: 3, reps: 10, hold_s: 10, tempo_s: [4, 4], target_pct: 40,
+     name: Gentle ankle pump, name_hi: टखने का हल्का पंप, how: Pull the toes up gently then relax, with the leg supported.}
+  - {id: ankle_active_dorsi, joint: ankle, movement: ankle_dorsiflexion, stage: 2, sets: 3, reps: 15, hold_s: 3, tempo_s: [3, 3], target_pct: 75,
+     name: Active ankle up and down, name_hi: टखना ऊपर-नीचे, how: Move the foot up and down through the available range.}
+  - {id: ankle_strength_plantar, joint: ankle, movement: ankle_plantarflexion, stage: 3, sets: 3, reps: 12, hold_s: 3, tempo_s: [3, 3], target_pct: 90,
+     name: Push the foot down against a band, name_hi: बैंड के विरुद्ध पैर नीचे दबाना, how: Light resistance band around the forefoot.}

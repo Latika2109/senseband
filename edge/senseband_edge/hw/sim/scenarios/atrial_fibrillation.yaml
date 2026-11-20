@@ -1,0 +1,6 @@
+name: atrial_fibrillation
+description: Normal rhythm for 1 min, then irregularly irregular rhythm (no P waves) at rest.
+seed: 7
+segments:
+  - {duration_s: 60,  activity: sitting, hr: 72, rhythm: normal}
+  - {duration_s: 240, activity: sitting, hr: 105, rhythm: af, ramp_s: 5}

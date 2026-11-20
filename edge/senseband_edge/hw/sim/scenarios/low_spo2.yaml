@@ -1,0 +1,6 @@
+name: low_spo2
+description: Seated, SpO2 drifts from 97 % down to 86 % over 1 min and stays low. Warning then critical.
+seed: 6
+segments:
+  - {duration_s: 60,  activity: sitting, hr: 80, spo2: 97}
+  - {duration_s: 240, activity: sitting, hr: 98, spo2: 86, ramp_s: 60}

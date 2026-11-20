@@ -1,0 +1,95 @@
+# Simulator settings. Everything tunable lives here or in scenarios/*.yaml (no magic numbers in code).
+frame_s: 0.2                 # one SensorFrame every 0.2 s (5 Hz, same as the /ws/live ECG chunks)
+rates_hz: {ecg: 250, imu: 50, ppg: 25, grip: 250, temp: 0.2}
+default_ramp_s: 20.0         # how long HR / SpO2 / temp take to move to a new segment's value
+default_transition_s: 1.5    # how long the body orientation takes to change posture
+
+heart:
+  min_hr_for_beats: 20       # below this there are no beats at all (asystole / collapse)
+  rsa_amp: 0.04              # respiratory sinus arrhythmia (fraction of RR)
+  resp_hz: 0.25
+  hrv_sd: 0.015              # beat-to-beat noise (fraction of RR) in normal rhythm
+  af_rr_cv: 0.22             # RR variability in atrial fibrillation
+  ptt_s: 0.22                # pulse transit time ECG R-peak -> PPG foot
+
+ecg:
+  r_amp_mv: 1.1
+  baseline_wander_mv: 0.08
+  powerline_hz: 50           # India
+  powerline_mv: 0.015
+  white_mv: 0.02
+  motion_mv: 0.25            # motion artifact amplitude at motion = 1
+  noise_mv: 1.0              # broadband noise amplitude at ecg_noise = 1
+  af_fib_mv: 0.04            # fibrillatory baseline in AF
+  lead_off_hum_mv: 0.3       # AD8232 floating input picks up mains hum
+  waves:                     # [offset_s, sigma_s, amplitude_mv] relative to the R peak
+    P: [-0.18, 0.025, 0.12]
+    Q: [-0.035, 0.010, -0.15]
+    S: [0.035, 0.012, -0.25]
+    T: [0.25, 0.045, 0.30]
+
+ppg:
+  ir_dc: 110000
+  red_dc: 90000
+  perfusion_index: 0.02      # AC/DC of the IR channel
+  noise_frac: 0.0008
+  motion_frac: 0.03          # motion artifact (fraction of DC) at motion = 1
+  finger_off_ir: 2500
+  finger_off_red: 1800
+  finger_threshold: 50000    # same rule as firmware/small_band
+  spo2_a: 110.0              # SpO2 = a - b * R  (R = ratio of ratios)
+  spo2_b: 25.0
+
+imu:
+  acc_noise_g: 0.004
+  gyro_noise_dps: 0.25
+  quat_noise_deg: 0.15
+  tremor_g: 0.003
+  mounts_euler_deg:          # fixed mounting offsets of the limb IMUs (extrinsic xyz)
+    limb_ref: [0, 0, 20]
+    limb_moving: [0, 0, -20]
+  orientations:              # waist IMU, extrinsic xyz euler (deg); accel reads body-frame "up"
+    standing: [0, 0, 0]
+    sitting: [0, 15, 0]
+    lying_supine: [0, -90, 0]
+    lying_prone: [0, 90, 0]
+    lying_left: [90, 0, 0]
+    lying_right: [-90, 0, 0]
+  fall: {freefall_s: 0.35, freefall_g: 0.12, impact_g: 4.0, impact_sigma_s: 0.03,
+         rotate_s: 0.7, direction: [0.8, 0.15, 0.55]}
+  collapse: {freefall_s: 0.0, freefall_g: 1.0, impact_g: 1.8, impact_sigma_s: 0.08,
+             rotate_s: 1.6, direction: [0.8, 0.15, 0.55]}
+
+temp:
+  base_c: 36.4
+  sensor_noise_c: 0.03
+  drift_c: 0.15
+  drift_period_s: 600
+  resolution_c: 0.0625       # DS18B20 12-bit
+
+grip:
+  noise_v: 0.003
+  cal: [[0.0, 0.0], [0.3, 1.0], [1.0, 5.0], [1.8, 15.0], [2.5, 30.0], [3.0, 45.0]]  # (volts, kg)
+
+# Per-activity defaults. A scenario segment may override any of these.
+activities:
+  sitting:   {posture: sitting,  hr: 72,  spo2: 97, cadence_hz: 0,   vert_g: 0,    lat_g: 0,
+              gyro_dps: 0,  motion: 0.0, breathing_g: 0.01,  arm_swing_deg: 0}
+  standing:  {posture: standing, hr: 78,  spo2: 97, cadence_hz: 0,   vert_g: 0,    lat_g: 0,
+              gyro_dps: 0,  motion: 0.0, breathing_g: 0.01,  arm_swing_deg: 0}
+  walking:   {posture: standing, hr: 98,  spo2: 97, cadence_hz: 1.8, vert_g: 0.25, lat_g: 0.10,
+              gyro_dps: 25, motion: 0.3, breathing_g: 0.0,   arm_swing_deg: 20}
+  jogging:   {posture: standing, hr: 150, spo2: 96, cadence_hz: 2.8, vert_g: 0.90, lat_g: 0.30,
+              gyro_dps: 60, motion: 0.8, breathing_g: 0.0,   arm_swing_deg: 40}
+  sleeping:  {posture: lying_supine, hr: 56, spo2: 96, cadence_hz: 0, vert_g: 0, lat_g: 0,
+              gyro_dps: 0,  motion: 0.0, breathing_g: 0.012, arm_swing_deg: 0}
+  lying_still: {posture: lying_supine, hr: 75, spo2: 97, cadence_hz: 0, vert_g: 0, lat_g: 0,
+              gyro_dps: 0,  motion: 0.0, breathing_g: 0.008, arm_swing_deg: 0}
+  # Rehab: waist sits still; main band = reference limb, small band = moving limb. The moving
+  # IMU rotates about the hinge axis (y) by the joint angle from the segment's `joint` block.
+  exercise_elbow: {posture: sitting, hr: 90, spo2: 97, cadence_hz: 0, vert_g: 0, lat_g: 0,
+              gyro_dps: 0,  motion: 0.1, breathing_g: 0.01, arm_swing_deg: 0,
+              ref_euler_deg: [0, -20, 0], hinge_sign: 1}
+  exercise_knee:  {posture: sitting, hr: 92, spo2: 97, cadence_hz: 0, vert_g: 0, lat_g: 0,
+              gyro_dps: 0,  motion: 0.1, breathing_g: 0.01, arm_swing_deg: 0,
+              ref_euler_deg: [0, -90, 0], hinge_sign: -1}

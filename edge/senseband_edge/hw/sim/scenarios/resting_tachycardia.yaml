@@ -1,0 +1,6 @@
+name: resting_tachycardia
+description: Seated and still, HR jumps from 72 to 140 bpm for no reason. Context engine must warn.
+seed: 10
+segments:
+  - {duration_s: 120, activity: sitting, hr: 72}
+  - {duration_s: 480, activity: sitting, hr: 140, ramp_s: 30}

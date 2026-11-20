@@ -1,0 +1,10 @@
+name: knee_exercise
+description: Rehab - 8 knee flexion reps to ~95 deg, 6 s per rep with 2 s hold. Main band on thigh, small band on shin.
+# limbs: rehab = both limb IMUs worn on the joint (zero angle at rest), not on the wrists
+defaults: {limbs: rehab, ref_euler_deg: [0, -90, 0], hinge_sign: -1}
+seed: 12
+segments:
+  - {duration_s: 30, activity: sitting, hr: 76}
+  - {duration_s: 68, activity: exercise_knee, hr: 90, ramp_s: 15, trans_s: 3.0,
+     joint: {name: knee, rom_deg: 95, reps: 8, rep_s: 6.0, hold_s: 2.0, rest_s: 10}}
+  - {duration_s: 30, activity: sitting, hr: 80}

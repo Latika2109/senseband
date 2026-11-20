@@ -1,0 +1,8 @@
+name: collapse
+description: Athlete jogging, collapses at t=40 s, heartbeat stops (ECG flat, no pulse). Critical.
+seed: 5
+segments:
+  - {duration_s: 10, activity: walking, hr: 100}
+  - {duration_s: 30, activity: jogging, hr: 160, ramp_s: 10}
+  - {duration_s: 80, activity: jogging, hr: 165,
+     events: [{type: collapse, at_s: 0.5, then: lying_still, hr_after: 0, ramp_after_s: 6}]}

@@ -1,0 +1,9 @@
+name: grip_test
+description: Wrist rehab grip assessment - three squeezes of increasing force (FSR via ADS1115 A1).
+seed: 13
+segments:
+  - {duration_s: 20, activity: sitting, hr: 74}
+  - {duration_s: 12, activity: sitting, hr: 82, grip_test: {at_s: 1, peak_kg: 18, ramp_s: 1.5, hold_s: 2}}
+  - {duration_s: 12, activity: sitting, hr: 84, grip_test: {at_s: 1, peak_kg: 22, ramp_s: 1.5, hold_s: 2}}
+  - {duration_s: 12, activity: sitting, hr: 84, grip_test: {at_s: 1, peak_kg: 25, ramp_s: 1.5, hold_s: 2}}
+  - {duration_s: 20, activity: sitting, hr: 78}

@@ -1,0 +1,7 @@
+subject,condition,t_s,device,reference
+V01,elbow 0,0,1.2,0
+V01,elbow 45,30,46.1,45
+V01,elbow 90,60,91.4,90
+V01,knee 0,90,-0.8,0
+V01,knee 45,120,44.0,45
+V01,knee 90,150,88.9,90

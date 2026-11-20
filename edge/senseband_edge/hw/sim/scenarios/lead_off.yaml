@@ -1,0 +1,9 @@
+name: lead_off
+description: Resting; ECG electrode falls off 60-120 s and finger leaves the SpO2 clip 150-200 s. Expect "check sensor", not vital alerts.
+seed: 8
+segments:
+  - {duration_s: 60, activity: sitting, hr: 72}
+  - {duration_s: 60, activity: sitting, hr: 72, lead_off: true}
+  - {duration_s: 30, activity: sitting, hr: 72}
+  - {duration_s: 50, activity: sitting, hr: 72, finger_off: true}
+  - {duration_s: 100, activity: sitting, hr: 72}

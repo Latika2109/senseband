@@ -1,0 +1,4 @@
+subject,condition,t_s,device,reference
+V01,rest,0,97,98
+V01,rest,60,96,97
+V01,post-exercise,600,95,96

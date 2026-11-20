@@ -1,0 +1,10 @@
+name: sleeping
+description: Night compressed to 10 min - lying, low HR, five SpO2 dips of ~6 %, two turns in bed.
+seed: 3
+segments:
+  - {duration_s: 150, activity: sleeping, hr: 56, spo2: 96,
+     spo2_dips: [{at_s: 30, depth: 6, dur_s: 30}, {at_s: 100, depth: 6, dur_s: 30}]}
+  - {duration_s: 150, activity: sleeping, posture: lying_left, hr: 54, trans_s: 3.0,
+     spo2_dips: [{at_s: 20, depth: 6, dur_s: 30}, {at_s: 90, depth: 7, dur_s: 30}]}
+  - {duration_s: 300, activity: sleeping, hr: 57, trans_s: 3.0,
+     spo2_dips: [{at_s: 60, depth: 6, dur_s: 30}]}

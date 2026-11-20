@@ -1,0 +1,613 @@
+{
+  "m4_rhythm": {
+    "name": "m4_rhythm",
+    "algorithm": "lightgbm",
+    "feature_version": 2,
+    "features": [
+      "n_beats",
+      "mean_rr",
+      "hr_bpm",
+      "sdnn",
+      "rmssd",
+      "pnn50",
+      "pnn20",
+      "cv_rr",
+      "range_rr",
+      "iqr_rr",
+      "mad_diff",
+      "sd1",
+      "sd2",
+      "sd_ratio",
+      "sampen",
+      "cosen",
+      "turning_point_ratio",
+      "shannon_entropy",
+      "frac_irregular",
+      "frac_short",
+      "frac_long",
+      "max_over_median"
+    ],
+    "classes": [
+      "af",
+      "noisy",
+      "normal",
+      "other"
+    ],
+    "data": {
+      "sources": [
+        "PhysioNet/CinC 2017 training set (8,528 single-lead recordings, first 30 s)"
+      ],
+      "provenance": "real",
+      "n_windows": 8528,
+      "class_counts": {
+        "af": 738,
+        "noisy": 284,
+        "normal": 5050,
+        "other": 2456
+      },
+      "notes": "Folds are by recording (CinC does not publish subject ids; most recordings are different people). 'af' is a screening label 'possible AF', never a diagnosis."
+    },
+    "cv": {
+      "scheme": "GroupKFold(5) by subject/recording",
+      "n": 8528,
+      "n_groups": 8528,
+      "macro_f1": 0.6982292170389145,
+      "accuracy": 0.7918621013133208,
+      "per_class_f1": {
+        "af": 0.7413793103448276,
+        "noisy": 0.5015105740181269,
+        "normal": 0.8700609396500885,
+        "other": 0.6799660441426146
+      },
+      "confusion": {
+        "labels": [
+          "af",
+          "noisy",
+          "normal",
+          "other"
+        ],
+        "matrix": [
+          [
+            559,
+            35,
+            22,
+            122
+          ],
+          [
+            18,
+            166,
+            49,
+            51
+          ],
+          [
+            39,
+            104,
+            4426,
+            481
+          ],
+          [
+            154,
+            73,
+            627,
+            1602
+          ]
+        ]
+      },
+      "fold_macro_f1": [
+        0.6799214778277841,
+        0.6834418196016236,
+        0.7318908520281574,
+        0.6889624148889941,
+        0.7072085517015743
+      ]
+    },
+    "target": {
+      "metric": "af_f1",
+      "value": 0.8,
+      "got": 0.7414,
+      "met": false,
+      "validated_on_real_data": true
+    },
+    "onnx": {
+      "file": "m4_rhythm.onnx",
+      "bytes": 1422985,
+      "parity_max_abs_diff": 3.670552584655873e-07
+    },
+    "latency_ms_this_machine": {
+      "median": 0.02,
+      "p95": 0.021
+    },
+    "latency_budget_ms": 50.0,
+    "af_f1": 0.7413793103448276,
+    "rule_baseline_af_f1_rr_cv_gt_0.12": 0.2598331346841478,
+    "trained_at": "2026-11-20T12:53:30+00:00",
+    "libs": {
+      "python": "3.11.15",
+      "lightgbm": "4.7.0",
+      "sklearn": "1.9.1",
+      "onnxruntime": "1.32.0",
+      "numpy": "2.4.6"
+    }
+  },
+  "m3_ecg_quality": {
+    "name": "m3_ecg_quality",
+    "algorithm": "lightgbm",
+    "feature_version": 2,
+    "features": [
+      "std",
+      "ptp",
+      "kurtosis",
+      "skew",
+      "flat_frac",
+      "clip_frac",
+      "qrs_band_ratio",
+      "baseline_ratio",
+      "hf_ratio",
+      "n_peaks",
+      "rr_cv",
+      "template_corr",
+      "template_corr_min",
+      "peak_amp_ratio",
+      "diff_std_ratio"
+    ],
+    "classes": [
+      "good",
+      "noisy",
+      "unusable"
+    ],
+    "data": {
+      "sources": [
+        "PhysioNet/CinC 2017 (noisy '~' vs N/A/O recordings, 5 s windows, resampled to 250 Hz)",
+        "simulated unusable windows (flat, 50 Hz hum, clipped, white noise, drift)"
+      ],
+      "provenance": "mixed",
+      "n_windows": 17214,
+      "class_counts": {
+        "good": 16134,
+        "noisy": 480,
+        "unusable": 600
+      },
+      "notes": "CinC 2011 (the dataset named in docs/04) was not reachable; 2017's noisy class is the real-data proxy. 'noisy' labels are per recording, so some windows labelled noisy are locally clean."
+    },
+    "cv": {
+      "scheme": "GroupKFold(5) by subject/recording",
+      "n": 17214,
+      "n_groups": 9128,
+      "macro_f1": 0.7957731753493514,
+      "accuracy": 0.9572441036365749,
+      "per_class_f1": {
+        "good": 0.9770132916340891,
+        "noisy": 0.4128,
+        "unusable": 0.9975062344139651
+      },
+      "confusion": {
+        "labels": [
+          "good",
+          "noisy",
+          "unusable"
+        ],
+        "matrix": [
+          [
+            15620,
+            512,
+            2
+          ],
+          [
+            221,
+            258,
+            1
+          ],
+          [
+            0,
+            0,
+            600
+          ]
+        ]
+      },
+      "fold_macro_f1": [
+        0.7800212434358776,
+        0.8026368897422458,
+        0.8160844981868577,
+        0.7822654500233878,
+        0.7941711901058316
+      ]
+    },
+    "target": {
+      "metric": "accuracy",
+      "value": 0.92,
+      "got": 0.9572,
+      "met": true,
+      "validated_on_real_data": true
+    },
+    "onnx": {
+      "file": "m3_ecg_quality.onnx",
+      "bytes": 836456,
+      "parity_max_abs_diff": 3.0429566810763475e-07
+    },
+    "latency_ms_this_machine": {
+      "median": 0.015,
+      "p95": 0.017
+    },
+    "latency_budget_ms": 50.0,
+    "trained_at": "2026-11-20T12:53:37+00:00",
+    "libs": {
+      "python": "3.11.15",
+      "lightgbm": "4.7.0",
+      "sklearn": "1.9.1",
+      "onnxruntime": "1.32.0",
+      "numpy": "2.4.6"
+    }
+  },
+  "m1_activity": {
+    "name": "m1_activity",
+    "algorithm": "lightgbm",
+    "feature_version": 2,
+    "features": [
+      "mean_x",
+      "mean_y",
+      "mean_z",
+      "mean_norm",
+      "tilt_z_deg",
+      "abs_mean_x",
+      "abs_mean_y",
+      "abs_mean_z",
+      "std_x",
+      "std_y",
+      "std_z",
+      "std_norm",
+      "mean_abs_norm_dev",
+      "min_norm",
+      "max_norm",
+      "range_norm",
+      "p10_norm",
+      "p90_norm",
+      "kurt_norm",
+      "skew_norm",
+      "sma",
+      "zcr_norm",
+      "mean_jerk",
+      "band_0p3_1",
+      "band_1_3",
+      "band_3_6",
+      "band_6_25",
+      "dom_freq",
+      "dom_peak_ratio",
+      "spec_entropy",
+      "corr_xy",
+      "corr_xz",
+      "corr_yz",
+      "z_dom_freq",
+      "autocorr_peak",
+      "autocorr_lag_s"
+    ],
+    "classes": [
+      "exercising",
+      "lying",
+      "running",
+      "sitting",
+      "stairs",
+      "standing",
+      "walking"
+    ],
+    "data": {
+      "sources": [
+        "UCI HAR (waist smartphone, 30 subjects, 50 Hz)",
+        "PAMAP2 (chest IMU, 9 subjects, 100->50 Hz)"
+      ],
+      "provenance": "real",
+      "n_windows": 19434,
+      "n_subjects": 39,
+      "window": "128 samples @ 50 Hz = 2.56 s",
+      "class_counts": {
+        "exercising": 1732,
+        "lying": 2694,
+        "running": 380,
+        "sitting": 4242,
+        "stairs": 3791,
+        "standing": 3951,
+        "walking": 2644
+      },
+      "notes": "Subject-wise CV. 'running' and 'exercising' come only from PAMAP2 (9 people); no separate hold-out dataset. Sleeping is a rule on top (lying + still >= 2 min), not modelled."
+    },
+    "cv": {
+      "scheme": "GroupKFold(5) by subject/recording",
+      "n": 19434,
+      "n_groups": 39,
+      "macro_f1": 0.8507839093456325,
+      "accuracy": 0.8474323350828445,
+      "per_class_f1": {
+        "exercising": 0.7662813645334086,
+        "lying": 0.9761243753470294,
+        "running": 0.8630705394190872,
+        "sitting": 0.7985057202895167,
+        "stairs": 0.9205890086773599,
+        "standing": 0.7670647391577624,
+        "walking": 0.8638516179952644
+      },
+      "confusion": {
+        "labels": [
+          "exercising",
+          "lying",
+          "running",
+          "sitting",
+          "stairs",
+          "standing",
+          "walking"
+        ],
+        "matrix": [
+          [
+            1359,
+            0,
+            28,
+            24,
+            118,
+            67,
+            136
+          ],
+          [
+            2,
+            2637,
+            0,
+            37,
+            0,
+            18,
+            0
+          ],
+          [
+            40,
+            0,
+            312,
+            5,
+            5,
+            17,
+            1
+          ],
+          [
+            12,
+            27,
+            0,
+            3420,
+            14,
+            769,
+            0
+          ],
+          [
+            104,
+            0,
+            3,
+            20,
+            3501,
+            65,
+            98
+          ],
+          [
+            41,
+            45,
+            0,
+            812,
+            2,
+            3051,
+            0
+          ],
+          [
+            257,
+            0,
+            0,
+            6,
+            175,
+            17,
+            2189
+          ]
+        ]
+      },
+      "fold_macro_f1": [
+        0.8346198969222566,
+        0.9035158704889555,
+        0.8469303480393383,
+        0.8699302807690891,
+        0.6979696254696918
+      ]
+    },
+    "target": {
+      "metric": "macro_f1",
+      "value": 0.9,
+      "got": 0.8508,
+      "met": false,
+      "validated_on_real_data": true
+    },
+    "onnx": {
+      "file": "m1_activity.onnx",
+      "bytes": 2493651,
+      "parity_max_abs_diff": 2.304085096049846e-07
+    },
+    "latency_ms_this_machine": {
+      "median": 0.034,
+      "p95": 0.036
+    },
+    "latency_budget_ms": 50.0,
+    "rule_baseline_on_same_windows": {
+      "macro_f1": 0.7305149098155843,
+      "note": "stairs scored as walking, exercising excluded; compare with the model's own macro_f1 above"
+    },
+    "trained_at": "2026-11-20T12:53:58+00:00",
+    "libs": {
+      "python": "3.11.15",
+      "lightgbm": "4.7.0",
+      "sklearn": "1.9.1",
+      "onnxruntime": "1.32.0",
+      "numpy": "2.4.6"
+    }
+  },
+  "m5_expected_hr": {
+    "name": "m5_expected_hr",
+    "algorithm": "lightgbm regressor + RLS personalisation",
+    "feature_version": 2,
+    "features": [
+      "activity",
+      "intensity",
+      "cadence_hz",
+      "load_5min",
+      "tod_sin",
+      "tod_cos",
+      "temp_c",
+      "beta_blocker"
+    ],
+    "data": {
+      "sources": [
+        "PAMAP2 (9 subjects, chest HR strap + IMU)"
+      ],
+      "provenance": "real",
+      "n_windows": 9135,
+      "notes": "Leave-one-subject-out. Time of day and temperature are constant in PAMAP2 so those inputs are untrained."
+    },
+    "cv": {
+      "scheme": "leave-one-subject-out; RLS evaluated prequentially after a 25% learning period",
+      "mae_population_bpm": 11.906887845244889,
+      "mae_personalised_bpm": 10.10483642869316,
+      "per_subject_population": {
+        "101": 13.912368212936583,
+        "102": 10.356040563324337,
+        "103": 7.058639185281309,
+        "104": 11.314855354350513,
+        "105": 8.218113429325525,
+        "106": 12.13590040271327,
+        "107": 14.082536658081583,
+        "108": 11.01326036835524,
+        "109": 19.070276432835644
+      },
+      "per_subject_personalised": {
+        "101": 9.69867160438025,
+        "102": 11.279888371257876,
+        "103": 7.789509596030727,
+        "104": 9.649250766952681,
+        "105": 6.240921353159195,
+        "106": 8.514684833745363,
+        "107": 9.781923537266257,
+        "108": 11.985784121362878,
+        "109": 16.00289367408321
+      }
+    },
+    "target": {
+      "metric": "mae_bpm_after_personalisation",
+      "value": 8.0,
+      "got": 10.1,
+      "met": false,
+      "validated_on_real_data": true
+    },
+    "onnx": {
+      "file": "m5_expected_hr.onnx",
+      "bytes": 259873,
+      "parity_max_abs_diff": 3.937232426665105e-05
+    },
+    "latency_ms_this_machine": {
+      "median": 0.006,
+      "p95": 0.006
+    },
+    "latency_budget_ms": 50.0,
+    "residual_sd_bpm": 9.641367234102866,
+    "trained_at": "2026-11-20T12:54:00+00:00",
+    "libs": {
+      "python": "3.11.15",
+      "lightgbm": "4.7.0",
+      "sklearn": "1.9.1",
+      "onnxruntime": "1.32.0",
+      "numpy": "2.4.6"
+    }
+  },
+  "m2_fall": {
+    "name": "m2_fall",
+    "algorithm": "lightgbm",
+    "feature_version": 2,
+    "features": [
+      "peak_g",
+      "peak_time_s",
+      "min_g_before_peak",
+      "freefall_s",
+      "impact_width_s",
+      "jerk_peak",
+      "pre_std",
+      "post_std",
+      "post_mean_dev",
+      "post_std_ratio",
+      "orient_change_deg",
+      "z_drop",
+      "energy_post",
+      "n_over_2g"
+    ],
+    "classes": [
+      "adl",
+      "fall"
+    ],
+    "data": {
+      "sources": [
+        "edge hardware simulator (randomised fall direction/force + synthetic ADL impacts)"
+      ],
+      "provenance": "simulated",
+      "n_windows": 960,
+      "n_falls": 240,
+      "notes": "NOT validated on real falls (SisFall/MobiFall not obtainable here). Do not enable on a person until retrained and validated on real data: config models.fall.enabled stays false."
+    },
+    "cv": {
+      "scheme": "GroupKFold(5) by subject/recording",
+      "n": 960,
+      "n_groups": 40,
+      "macro_f1": 1.0,
+      "accuracy": 1.0,
+      "per_class_f1": {
+        "adl": 1.0,
+        "fall": 1.0
+      },
+      "confusion": {
+        "labels": [
+          "adl",
+          "fall"
+        ],
+        "matrix": [
+          [
+            720,
+            0
+          ],
+          [
+            0,
+            240
+          ]
+        ]
+      },
+      "fold_macro_f1": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "target": {
+      "metric": "sensitivity",
+      "value": 0.95,
+      "got": 1.0,
+      "met": true,
+      "validated_on_real_data": false
+    },
+    "onnx": {
+      "file": "m2_fall.onnx",
+      "bytes": 24786,
+      "parity_max_abs_diff": 8.316137360968485e-08
+    },
+    "latency_ms_this_machine": {
+      "median": 0.008,
+      "p95": 0.008
+    },
+    "latency_budget_ms": 50.0,
+    "sensitivity": 1.0,
+    "specificity": 1.0,
+    "enable_on_edge": false,
+    "trained_at": "2026-11-20T12:54:01+00:00",
+    "libs": {
+      "python": "3.11.15",
+      "lightgbm": "4.7.0",
+      "sklearn": "1.9.1",
+      "onnxruntime": "1.32.0",
+      "numpy": "2.4.6"
+    }
+  }
+}

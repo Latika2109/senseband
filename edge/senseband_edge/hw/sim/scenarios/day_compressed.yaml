@@ -1,0 +1,11 @@
+name: day_compressed
+description: A day squeezed into 30 min (same structure as day_in_life) so end-to-end report tests run in seconds.
+seed: 22
+segments:
+  - {duration_s: 480, activity: sleeping, hr: 56, spo2: 96, spo2_dips: [{at_s: 150, depth: 6, dur_s: 30}, {at_s: 260, depth: 6, dur_s: 30}, {at_s: 370, depth: 6, dur_s: 30}]}
+  - {duration_s: 120, activity: sitting,  hr: 72}
+  - {duration_s: 120, activity: walking,  hr: 100, ramp_s: 20}
+  - {duration_s: 300, activity: sitting,  hr: 74, ramp_s: 30}
+  - {duration_s: 300, activity: jogging,  hr: 150, ramp_s: 40}
+  - {duration_s: 120, activity: walking,  hr: 112, ramp_s: 30}
+  - {duration_s: 360, activity: sitting,  hr: 75, ramp_s: 30}

@@ -1,0 +1,5 @@
+name: resting
+description: Seated at rest, normal sinus rhythm, SpO2 97 %, 5 min.
+seed: 1
+segments:
+  - {duration_s: 300, activity: sitting, hr: 72, spo2: 97}

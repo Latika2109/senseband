@@ -1,0 +1,10 @@
+name: elbow_exercise
+description: Rehab - 10 elbow flexion reps to ~110 deg, 5 s per rep with 1 s hold. Main band on upper arm, small band on forearm.
+# limbs: rehab = both limb IMUs worn on the joint (zero angle at rest), not on the wrists
+defaults: {limbs: rehab, ref_euler_deg: [0, -20, 0], hinge_sign: 1}
+seed: 11
+segments:
+  - {duration_s: 30, activity: sitting, hr: 78}
+  - {duration_s: 70, activity: exercise_elbow, hr: 92, ramp_s: 15, trans_s: 3.0,
+     joint: {name: elbow, rom_deg: 110, reps: 10, rep_s: 5.0, hold_s: 1.0, rest_s: 10}}
+  - {duration_s: 30, activity: sitting, hr: 82}
