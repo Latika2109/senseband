@@ -56,7 +56,7 @@ run; no real-world accuracy exists yet and the README says so.**
 - Calibration/grip tests could wait forever with no band/sensor; noise from a noisy ECG segment leaked into HR/RR after the noise ended.
 
 ### Known limitations
-The band's local API is unauthenticated (LAN-trust only; see README). Trained `.onnx` files are git-ignored: run `make train` or ship them with a release.
+The band's local API is unauthenticated (LAN-trust only; see README). Trained `.onnx` files are committed in `ml/models/` (re-create with `make train`).
 Pi drivers, BLE link, SIM800L, GPIO and the ESP32 firmware are untested on hardware (firmware never compiled); Supabase Auth/Realtime/Storage,
 web push and SMS providers untested on a live project; PDF reports are English only (Devanagari needs a font file); battery life, Pi 3
 latency/RAM and all accuracy figures on real people are unmeasured.

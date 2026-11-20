@@ -10,7 +10,7 @@ tests/                feature + training + metrics-contract tests
 trains all five models with subject-wise cross-validation, exports ONNX, checks ONNX-vs-LightGBM parity, size (< 5 MB) and
 latency, and writes `models/metrics.json` + `METRICS.md`. `make bench` re-times the models; run it **on the Pi 3**.
 
-The trained `.onnx` files are git-ignored (they are build artifacts): run `make train`, or copy `ml/models/` from a release onto the band.
+The trained `.onnx` files are committed in `ml/models/`; re-create them with `make train`.
 
 ## Results (this repo, subject-wise CV, laptop)
 See `models/METRICS.md` for the generated table. Honest summary:
