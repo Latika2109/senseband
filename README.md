@@ -67,6 +67,7 @@ Then go milestone by milestone (`docs/06_ROADMAP.md`). Build the hardware in par
 | docs/04_ML_MODELS.md | context engine and the models, datasets, training plan |
 | docs/05_DATA_MODEL_AND_API.md | tables, REST + WebSocket API |
 | docs/06_ROADMAP.md | milestones and acceptance criteria |
+| docs/WIFI_AND_TWILIO.md | ESP32 over Wi-Fi to the Pi + Twilio SMS: exact setup |
 | docs/RUN_ON_HARDWARE.md | step-by-step for a friend: flash the ESP32, wire and install on the Pi, first checks |
 | docs/07_VALIDATION_PROTOCOL.md | how to measure real-world accuracy, false alarms and battery |
 | ml/README.md | models, data, results and gaps |

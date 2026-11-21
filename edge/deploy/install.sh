@@ -15,6 +15,12 @@ ln -sfn "$ROOT/releases/$VER" "$ROOT/current"
 "$ROOT/venv/bin/pip" install --quiet numpy scipy pyyaml pydantic fastapi uvicorn reportlab cryptography onnxruntime \
     smbus2 gpiozero pyserial bleak
 [ -f /etc/senseband/config.yaml ] || cp edge/deploy/config.example.yaml /etc/senseband/config.yaml
+if [ ! -f /etc/senseband/senseband.env ]; then      # secrets file: created once, never overwritten, root/senseband only
+  TOK=$(python3 -c "import secrets;print(secrets.token_hex(24))")
+  sed "s/^SENSEBAND_BAND_TOKEN=.*/SENSEBAND_BAND_TOKEN=$TOK/" .env.example > /etc/senseband/senseband.env
+  chown root:senseband /etc/senseband/senseband.env && chmod 640 /etc/senseband/senseband.env
+  echo "Created /etc/senseband/senseband.env: add your Twilio values there. Band token for the ESP32s: $TOK"
+fi
 chown -R senseband:senseband /var/lib/senseband "$ROOT"
 cp edge/deploy/senseband.service edge/deploy/senseband-update.service edge/deploy/senseband-update.timer /etc/systemd/system/
 cp edge/deploy/senseband.logrotate /etc/logrotate.d/senseband

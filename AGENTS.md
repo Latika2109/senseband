@@ -28,6 +28,7 @@ make sim SCENARIO=fall             # http://localhost:8080  (scenarios: make sim
 make app                           # optional hot-reload UI on :5173 (proxies to :8080)
 make train                         # optional: downloads ~1 GB datasets, retrains M1-M5 -> ml/models/
 ```
+ESP32-over-Wi-Fi + Twilio SMS: `docs/WIFI_AND_TWILIO.md` (secrets only in git-ignored `.env`; simulation never sends real SMS).
 Real hardware: follow `docs/RUN_ON_HARDWARE.md` (never tested on a device; firmware never compiled).
 
 ## 2. Repo map

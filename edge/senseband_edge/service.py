@@ -10,15 +10,21 @@ import socket
 import sys
 import time
 import uuid
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+
 from .alerts.manager import Alert
-from .alerts.sms import MockSms, Sim800Gateway, SmsGateway, send_with_retries
+from .alerts.sms import SmsGateway, send_with_retries
+from .alerts.twilio import make_sms
+from .bands import BandHub
 from .config import Settings
 from .context.engine import Engine
+from .hw.frames import ImuChunk
 from .hw.io import BandIO, GpioIO, SimIO
-from .hw.source import SensorSource, SimSource
+from .hw.source import Bundle, SensorSource, SimSource
 from .models.personal import PersonalHr
 from .rehab.service import RecoveryService
 from .storage.db import Store
@@ -64,14 +70,14 @@ class EdgeService:
                 pid = "p-" + uuid.uuid4().hex[:12]
                 self.store.state_set("patient_id", pid)
             cfg.patient.id = pid
-        self.sms = sms or (MockSms() if cfg.is_sim else Sim800Gateway(
-            cfg.sms.sim800.port, cfg.sms.sim800.baud))
+        self.sms = sms or make_sms(cfg)
+        self.bands = BandHub(cfg.bands, cfg.quality)
         self.io = io or (SimIO() if cfg.is_sim else GpioIO(cfg.hardware))
         self.hub = WsHub()
         self.engine = Engine(cfg, self.store, self.sms, self.io, emit=self._emit)
         self.engine.sms_dispatch = self._dispatch_sms
         self.recovery = RecoveryService(cfg, self.store)
-        self.engine.rehab.band_command = self.source.send_band_command
+        self.engine.rehab.band_command = self._band_command
         self.engine.rehab.grip_hook = self.source.set_grip
         self.engine.ecg_control = self.source.set_ecg
         self.sync: SyncWorker | None = None
@@ -150,7 +156,7 @@ class EdgeService:
         ok_frames = 0
         async for bundle in self.source.stream():
             try:
-                self.engine.process(bundle)
+                self.engine.process(self._merge_wifi(bundle))
                 ok_frames += 1
                 if ok_frames == 30:
                     self._mark_healthy()
@@ -161,6 +167,25 @@ class EdgeService:
                 last_status = self.engine.now
                 self.hub.publish({"t": "status", **self.status()})
             await asyncio.sleep(0)               # let the API / WebSocket run
+
+    def _band_command(self, text: str) -> None:
+        """RATE/VIB/CAL go to the BLE small band and, queued, to the Wi-Fi band (it fetches them on its next POST)."""
+        self.source.send_band_command(text)
+        self.bands.queue_command(text)
+
+    def _merge_wifi(self, bundle: Bundle) -> Bundle:
+        """Add what the ESP32s sent over Wi-Fi since the last frame (primary band lines; optional waist IMU)."""
+        extra = self.bands.drain_primary()
+        if extra:
+            bundle.ble_lines.extend(extra)
+        if self.cfg.bands.waist_imu_from:
+            f = bundle.frame
+            got = self.bands.drain_imu()
+            acc, gyro = got if got is not None else (np.zeros((0, 3)), np.zeros((0, 3)))
+            quat = np.tile([1.0, 0.0, 0.0, 0.0], (len(acc), 1))
+            waist = ImuChunk(50, f.t0, acc, gyro, quat)
+            bundle = replace(bundle, frame=replace(f, imu={**f.imu, "waist": waist}))
+        return bundle
 
     def _mark_healthy(self) -> None:
         """The OTA updater waits for this file after a restart; without it the update is rolled back."""
@@ -291,7 +316,7 @@ class EdgeService:
                         "imu": e.act.result.activity != "unknown",
                         "temp": e.temp_c is not None},
             "band": e.band_status(), "source": self.source.health(),
-            "sms": self.sms.status(), "internet": self.internet(),
+            "sms": self.sms.status(), "internet": self.internet(), "bands": self.bands.status(),
             "sync_backlog": self.store.backlog(),
             "sync": self.sync.status() if self.sync else {"enabled": False, "backlog": self.store.backlog()},
             "program": self.active_program(),

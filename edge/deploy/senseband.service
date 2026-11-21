@@ -16,6 +16,7 @@ Environment=PYTHONPATH=/opt/senseband/current/edge:/opt/senseband/current/ml
 Environment=SENSEBAND_CONFIG=/etc/senseband/config.yaml
 Environment=SENSEBAND_HEALTH_FILE=/opt/senseband/healthy
 EnvironmentFile=-/opt/senseband/current/env
+EnvironmentFile=-/etc/senseband/senseband.env     # secrets: Twilio + band token (chmod 600, outside the repo)
 ExecStartPre=+/opt/senseband/current/edge/deploy/power.sh
 ExecStart=/opt/senseband/venv/bin/python -m senseband_edge --hw
 Restart=always

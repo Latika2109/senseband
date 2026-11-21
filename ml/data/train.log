@@ -1,0 +1,9 @@
+2026-11-20 18:23:30.518 python[19821:678598] 2026-11-20 18:23:30.518616 [W:onnxruntime:, execution_frame.cc:943 VerifyOutputSizes] Expected shape from model of {1} does not match actual shape of {500} for output label
+m4: done in 58s -> {'metric': 'af_f1', 'value': 0.8, 'got': 0.7414, 'met': False, 'validated_on_real_data': True}
+2026-11-20 18:23:37.800 python[19821:678598] 2026-11-20 18:23:37.800262 [W:onnxruntime:, execution_frame.cc:943 VerifyOutputSizes] Expected shape from model of {1} does not match actual shape of {500} for output label
+m3: done in 7s -> {'metric': 'accuracy', 'value': 0.92, 'got': 0.9572, 'met': True, 'validated_on_real_data': True}
+2026-11-20 18:23:58.170 python[19821:678598] 2026-11-20 18:23:58.170158 [W:onnxruntime:, execution_frame.cc:943 VerifyOutputSizes] Expected shape from model of {1} does not match actual shape of {500} for output label
+m1: done in 20s -> {'metric': 'macro_f1', 'value': 0.9, 'got': 0.8508, 'met': False, 'validated_on_real_data': True}
+m5: done in 3s -> {'metric': 'mae_bpm_after_personalisation', 'value': 8.0, 'got': 10.1, 'met': False, 'validated_on_real_data': True}
+2026-11-20 18:24:01.018 python[19821:678598] 2026-11-20 18:24:01.018494 [W:onnxruntime:, execution_frame.cc:943 VerifyOutputSizes] Expected shape from model of {1} does not match actual shape of {500} for output label
+m2: done in 0s -> {'metric': 'sensitivity', 'value': 0.95, 'got': 1.0, 'met': True, 'validated_on_real_data': False}

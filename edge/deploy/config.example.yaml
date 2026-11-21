@@ -3,6 +3,7 @@ mode: hw
 db_path: /var/lib/senseband/senseband.db
 
 sms:
+  provider: auto                      # Twilio when TWILIO_* are in /etc/senseband/senseband.env, SIM800L as backup
   contacts: ["+91XXXXXXXXXX"]        # emergency numbers WITH country code. The app's profile contacts take over once set.
 
 logging:
@@ -27,3 +28,7 @@ models:
 
 # power:
 #   ecg_duty_cycle: true               # see docs: slows collapse detection while the ECG is paused
+
+bands:                                # ESP32 small bands over Wi-Fi
+  primary: S1                         # drives SpO2 / pulse / battery / joint quaternion
+  waist_imu_from: S1                  # use S1's raw IMU as the waist IMU (set "" if the Pi has its own MPU6050 on the waist)

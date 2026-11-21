@@ -18,6 +18,8 @@ sms:
   retries: 3
   retry_delay_s: 5
   sim800: {port: /dev/serial0, baud: 9600}
+  provider: auto                 # auto | twilio | sim800 | mock.  auto = Twilio when its env vars are set (+ SIM800 as a backup on a real band)
+  twilio: {api_base: "https://api.twilio.com", timeout_s: 15}   # credentials ONLY from env: TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_FROM_NUMBER
 
 alerts:
   countdown_s: 30                # critical alert: buzzer + "I'm OK" window before SMS
@@ -215,3 +217,11 @@ ota:                             # signed over-the-air updates (python -m senseb
   health_timeout_s: 90
   max_bytes: 200000000
   restart_cmd: [systemctl, restart, senseband]
+
+bands:                           # ESP32 small bands that send their readings over Wi-Fi (docs/WIFI_AND_TWILIO.md)
+  enabled: true                  # POST /api/band/ingest; refuses everything until SENSEBAND_BAND_TOKEN is set
+  primary: S1                    # this device drives SpO2/pulse/battery/joint quaternion (what the BLE small band did)
+  waist_imu_from: ""             # device id whose raw `A,..` lines act as the WAIST IMU (activity + fall detection); "" = the Pi's own MPU6050
+  max_devices: 8
+  max_body_bytes: 65536
+  stale_s: 10                    # a device silent this long shows as disconnected

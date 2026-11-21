@@ -1,20 +1,28 @@
-*.db
-*.pyc
-.DS_Store
-.env
-.env.*
-.pytest_cache/
-.ruff_cache/
 .venv/
 __pycache__/
-app/dev-dist/
-app/node_modules/
-cloud/node_modules/
-data/recordings/
-logs/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.db
 node_modules/
-# raw third-party datasets (GBs, some files > GitHub's 100 MB limit): re-download with `make train`
+cloud/node_modules/
+app/node_modules/
+app/dev-dist/
+logs/
+data/recordings/
+.DS_Store
+
+# secrets and local credentials: never commit
+.env
+.env.*
+!.env.example
+firmware/**/secrets.h
+
+# logs (but keep the training log)
+*.log
+!ml/data/train.log
+
+# raw third-party datasets (GBs, files > GitHub's 100 MB limit): re-download with `make train`
 ml/data/*
 !ml/data/cache/
 !ml/data/train.log
-*.log

@@ -20,6 +20,8 @@ def main() -> int:
     a = ap.parse_args()
     if a.sim:
         os.environ["SENSEBAND_SIM"] = "1"
+    from .envfile import load_env_files
+    load_env_files()                          # .env / SENSEBAND_ENV_FILE / /etc/senseband/senseband.env (real env vars win)
     from .config import load_settings
     over: dict = {}
     if a.sim:

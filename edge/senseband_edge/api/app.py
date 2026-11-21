@@ -7,13 +7,14 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
+from fastapi.responses import PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .. import privacy
+from ..bands import HubError
 from ..record import RecorderError
 from ..rehab import library as exlib
 from ..rehab.engine import RehabError
@@ -200,6 +201,33 @@ def create_app(svc: EdgeService, autostart: bool = True) -> FastAPI:
             raise HTTPException(422, str(e)) from e
         svc.after_erase()
         return {"erased": counts}
+
+    @app.post("/api/band/ingest")
+    async def band_ingest(request: Request) -> Response:
+        """An ESP32 small band posts its readings here (Wi-Fi). Needs X-Band-Token + X-Band-Id.
+        `Accept: text/plain` gets a tiny text reply (first line `OK accepted rejected`, then pending commands)."""
+        hub = svc.bands
+        try:
+            hub.authorize(request.headers.get("x-band-token"))
+            limit = svc.cfg.bands.max_body_bytes
+            cl = request.headers.get("content-length")
+            if cl and cl.isdigit() and int(cl) > limit:
+                raise HubError(413, "batch too large")
+            raw = await request.body()
+            if len(raw) > limit:
+                raise HubError(413, "batch too large")
+            res = hub.ingest(request.headers.get("x-band-id") or request.query_params.get("id", ""),
+                             raw.decode("utf-8", "replace"), request.client.host if request.client else None)
+        except HubError as e:
+            raise HTTPException(e.status, e.message) from e
+        if "text/plain" in request.headers.get("accept", ""):
+            return PlainTextResponse("\n".join([f"OK {res.accepted} {res.rejected}", *res.commands]) + "\n")
+        return Response(json.dumps({"accepted": res.accepted, "rejected": res.rejected, "commands": res.commands}),
+                        media_type="application/json")
+
+    @app.get("/api/bands")
+    def bands_status() -> dict[str, Any]:
+        return svc.bands.status()
 
     @app.post("/api/record/start")
     def record_start(body: RecordIn) -> dict[str, Any]:

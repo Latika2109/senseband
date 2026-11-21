@@ -28,11 +28,27 @@ class Sim800(_M):
     baud: int
 
 
+class TwilioCfg(_M):
+    api_base: str
+    timeout_s: float
+
+
 class Sms(_M):
     contacts: list[str]
     retries: int
     retry_delay_s: float
     sim800: Sim800
+    provider: str              # auto | twilio | sim800 | mock
+    twilio: TwilioCfg
+
+
+class BandsCfg(_M):
+    enabled: bool
+    primary: str
+    waist_imu_from: str
+    max_devices: int
+    max_body_bytes: int
+    stale_s: float
 
 
 class Alerts(_M):
@@ -280,6 +296,7 @@ class Settings(_M):
     rehab: Rehab
     cloud: Cloud
     models: ModelsCfg
+    bands: BandsCfg
     logging: LoggingCfg
     power: PowerCfg
     ota: OtaCfg
@@ -307,4 +324,11 @@ def load_settings(overrides: dict[str, Any] | None = None, path: str | None = No
             data = _merge(data, yaml.safe_load(f) or {})
     if overrides:
         data = _merge(data, overrides)
-    return Settings.model_validate(data)
+    settings = Settings.model_validate(data)
+    nums = os.environ.get("ALERT_TO_NUMBERS")
+    if nums:                                              # secrets/recipients from the environment, never from git
+        from .alerts.twilio import is_e164, parse_numbers
+        good = [n for n in parse_numbers(nums) if is_e164(n)]
+        if good:
+            settings.sms.contacts = good
+    return settings
