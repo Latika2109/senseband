@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #aaa; margin: 0 4px 0 12px; }
+  .dot.on { background: #16a34a; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+  .big { font-size: 28px; font-weight: 700; }
+  .small { font-size: 13px; color: #64748b; }
+  #banner { display: none; background: #dc2626; color: #fff; padding: 12px; border-radius: 10px; margin-bottom: 12px;
+            font-weight: 700; justify-content: space-between; align-items: center; }
+  #banner button { margin: 0; background: #fff; color: #dc2626; }
+  #sos { width: 100%; padding: 22px; font-size: 26px; font-weight: 800; background: #dc2626; }
+  .row button { margin-right: 8px; }
+  #log { font-family: monospace; font-size: 12px; max-height: 140px; overflow-y: auto; white-space: pre-wrap; }
+  .FALL { color: #dc2626; } .POSSIBLE_FALL { color: #d97706; } .NORMAL { color: #16a34a; }
+</style>
+
+<h1>{{ p.name }} <span class="small">({{ p.reason }})</span>
+  <span class="small"><span class="dot" id="d_main"></span>Main<span class="dot" id="d_sup"></span>Support</span></h1>
+
+<div id="banner"><span id="banner_text"></span><button onclick="post('/api/dismiss')">Dismiss</button></div>
+
+<div class="card grid">
+  <div><div class="big" id="hr">--</div><div class="small">HR (bpm)</div></div>
+  <div><div class="big" id="spo2">--</div><div class="small">SpO2 % (approx)</div></div>
+  <div><div class="big" id="temp">--</div><div class="small">Temp °C</div></div>
+</div>
+
+{% if rehab %}
+<div class="card grid" style="grid-template-columns: repeat(4, 1fr)">
+  <div><div class="big" id="angle">--</div><div class="small">Joint angle °</div></div>
+  <div><div class="big" id="jmin">--</div><div class="small">Min</div></div>
+  <div><div class="big" id="jmax">--</div><div class="small">Max</div></div>
+  <div><div class="big" id="rom">--</div><div class="small">ROM</div></div>
+</div>
+{% else %}
+<div class="card grid" style="grid-template-columns: 1fr 1fr 1fr">
+  <div><div class="big" id="tilt">--</div><div class="small">Tilt °</div></div>
+  <div><div class="big" id="status">--</div><div class="small">Status</div></div>
+  <div><label style="margin:8px 0 0"><input type="checkbox" id="sleep" style="width:auto"
+       onchange="post('/api/sleep', {on: this.checked})"> Sleeping mode</label></div>
+</div>
+{% endif %}
+
+<div class="card"><canvas id="ecg" height="110"></canvas><div class="small">ECG (0.5-40 Hz)</div></div>
+
+<div class="card row">
+  <button onclick="post('/api/zero')">Set Zero</button>
+  <div class="small">{{ 'Zeroes both IMUs' if rehab else 'Zeroes the main IMU' }} - hold the pose, then press.</div>
+</div>
+
+<button id="sos" onclick="if(confirm('Send SOS alert?')) post('/api/sos')">SOS</button>
+
+<div class="card" style="margin-top:12px"><b>Events</b><div id="log"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const fmt = v => (v === null || v === undefined) ? '--' : v;
+function post(url, body) {
+  return fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})});
+}
+const chart = new Chart($('ecg'), {
+  type: 'line',
+  data: {labels: [], datasets: [{data: [], borderColor: '#dc2626', borderWidth: 1.5, pointRadius: 0, tension: 0.2}]},
+  options: {animation: false, plugins: {legend: {display: false}}, scales: {x: {display: false}}}
+});
+async function poll() {
+  try {
+    const s = await (await fetch('/api/state')).json();
+    $('d_main').className = 'dot' + (s.main_online ? ' on' : '');
+    $('d_sup').className = 'dot' + (s.sup_online ? ' on' : '');
+    $('hr').textContent = fmt(s.hr); $('spo2').textContent = fmt(s.spo2); $('temp').textContent = fmt(s.temp);
+    if (s.rehab) {
+      ['angle', 'jmin', 'jmax', 'rom'].forEach(k => $(k).textContent = fmt(s[k]));
+    } else {
+      $('tilt').textContent = s.tilt;
+      $('status').textContent = s.status; $('status').className = 'big ' + s.status;
+      $('sleep').checked = s.sleeping;
+    }
+    $('banner').style.display = s.alert ? 'flex' : 'none';
+    $('banner_text').textContent = s.alert || '';
+    $('log').textContent = s.events.join('\n');
+    chart.data.labels = s.ecg.map((_, i) => i);
+    chart.data.datasets[0].data = s.ecg;
+    chart.update();
+  } catch (e) {}
+}
+setInterval(poll, 500); poll();
+</script>
+{% endblock %}

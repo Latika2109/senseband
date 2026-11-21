@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>SenseBand setup</h1>
+<form method="post" class="card">
+  <label>Name</label><input name="name" required value="{{ p.get('name','') }}">
+  <label>Age</label><input name="age" type="number" min="0" required value="{{ p.get('age','') }}">
+  <label>Emergency contact</label><input name="contact" required value="{{ p.get('contact','') }}">
+  <label>Reason</label>
+  <select name="reason" id="reason" onchange="toggle()">
+    <option {{ 'selected' if p.get('reason')!='Rehab' }}>Health monitoring</option>
+    <option value="Rehab" {{ 'selected' if p.get('reason')=='Rehab' }}>Rehab</option>
+  </select>
+  <div id="rehab" style="display:none">
+    <label>Joint</label>
+    <select name="joint">
+      {% for j in ['Elbow','Knee','Shoulder','Wrist','Ankle','Hip'] %}
+      <option {{ 'selected' if p.get('joint')==j }}>{{ j }}</option>{% endfor %}
+    </select>
+    <label>Side</label>
+    <select name="side">
+      {% for s in ['Left','Right'] %}<option {{ 'selected' if p.get('side')==s }}>{{ s }}</option>{% endfor %}
+    </select>
+  </div>
+  <button type="submit">Save and continue</button>
+</form>
+<script>
+  function toggle() { document.getElementById('rehab').style.display =
+    document.getElementById('reason').value === 'Rehab' ? 'block' : 'none'; }
+  toggle();
+</script>
+{% endblock %}

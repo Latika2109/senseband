@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>How to wear the bands</h1>
+<div class="card">
+  {% if rehab %}
+  <p>Rehab: {{ p.side }} {{ p.joint|lower }}</p>
+  <ol>
+    <li>Put the <b>main band above the {{ p.joint|lower }}</b> on your {{ p.side|lower }} side.</li>
+    <li>Put the <b>support band below the {{ p.joint|lower }}</b>, in the same orientation as the main band.</li>
+    <li>Straighten the limb fully.</li>
+    <li>Press <b>Set Zero</b> on the dashboard.</li>
+  </ol>
+  {% else %}
+  <p>Health monitoring</p>
+  <ol>
+    <li>Wear the <b>main band at the waist</b>, with the components facing the front.</li>
+    <li>Wear the <b>support band on the wrist or finger</b>.</li>
+    <li>Stand straight.</li>
+    <li>Press <b>Set Zero</b> on the dashboard.</li>
+  </ol>
+  {% endif %}
+</div>
+<a class="btn" href="/dashboard">Go to dashboard</a>
+<a class="btn" style="background:#64748b" href="/setup">Edit setup</a>
+{% endblock %}
